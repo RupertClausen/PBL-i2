@@ -60,10 +60,10 @@ Recommended defaults (adjust per part and note exceptions here):
 
 | Setting | Value |
 |---------|-------|
-| Material | PLA+ or PETG |
+| Material | ABS |
 | Layer height | 0.2 mm |
-| Walls / perimeters | 4 |
-| Top / bottom layers | 5 |
+| Walls / perimeters | 3 |
+| Top / bottom layers | 3 |
 | Infill | 30–40 % gyroid |
 | Supports | Only where noted |
 
