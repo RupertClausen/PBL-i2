@@ -12,7 +12,7 @@ Everything needed to physically build the robot.
 
 ## Robot layout
 
-- 4 legs × 3 DOF (hip abduction, hip/shoulder, knee) = **12 servos**
+- 4 legs × 2 DOF (hip abduction, hip/shoulder) = **8 servos**
 - Leg naming used everywhere (CAD, firmware, BOM):
 
 ```
