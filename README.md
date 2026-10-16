@@ -12,7 +12,7 @@ Project-Based Learning (PBL) collaboration between
 
 The robot must be able to:
 
-1. **Climb stairs** — walk up a stairway with **2 cm** high steps.
+1. **Climb stairs** — walk up a stairway with **2 cm/3 cm** high steps.
 2. **Defend a goal** — block a tennis ball from entering a goal.
 
 See [docs/requirements.md](docs/requirements.md) for the full task description
