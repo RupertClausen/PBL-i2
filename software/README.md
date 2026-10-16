@@ -31,7 +31,7 @@ firmware/
 ├── include/
 │   └── robot_config.h      Pins, leg dimensions, servo channels, trims, directions
 ├── lib/
-│   ├── Kinematics/         3-DOF leg inverse kinematics
+│   ├── Kinematics/         2-DOF leg inverse kinematics
 │   └── LegServos/          PCA9685 servo output with trim / direction
 ├── src/
 │   └── main.cpp            Setup, serial command interface, mode state machine
