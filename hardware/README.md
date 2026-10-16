@@ -42,7 +42,7 @@ Part files use a short, consistent name shared by SolidWorks, STEP and STL:
 - Parts that can be printed in an accent colour get an `[a]_` prefix, e.g.
   `[a]_body_cover.stl` (Voron convention).
 
-## Exporting from SolidWorks
+## File Universalization
 
 When you change a part, export in the same commit:
 
