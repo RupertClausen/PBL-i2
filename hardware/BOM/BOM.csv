@@ -1,0 +1,15 @@
+Category,Part,Description,Qty,Unit price,Currency,Supplier,Link,Status,Notes
+Electronics,ESP32 DevKit V1,ESP32-WROOM-32 development board,1,,,,,Proposed,
+Electronics,PCA9685,16-channel 12-bit PWM servo driver (I2C),1,,,,,Proposed,Drives all 12 servos; frees ESP32 GPIO
+Actuators,Servo,Metal-gear hobby servo (model TBD: MG996R / DS3218 / MG90S),12,,,,,TBD,Size depends on robot mass and stair torque calculation
+Power,Battery,2S LiPo 7.4 V (capacity TBD),1,,,,,Proposed,
+Power,Buck converter (servo),High-current step-down to 5-6 V (>= 10 A),1,,,,,Proposed,12 servos can draw several amps when stalling
+Power,Buck converter (logic),Step-down to 5 V for ESP32,1,,,,,Proposed,Keep logic supply separate from servo supply
+Power,Power switch,Main power switch,1,,,,,Proposed,
+Power,Connectors,XT60 pair,1,,,,,Proposed,
+Sensors,IMU,MPU6050 or similar 6-axis IMU,1,,,,,Optional,Body balance on stairs
+Sensors,Distance / vision sensor,For tennis ball detection (TBD),1,,,,,TBD,
+Hardware,Screws,M3 socket head (lengths TBD),,,,,,TBD,
+Hardware,Nuts,M3 nuts / heat-set inserts,,,,,,TBD,
+Hardware,Bearings,Flanged bearings for servo horn side support (size TBD),,,,,,Optional,
+Printed,Printed parts,See hardware/STLs,1 set,,,,,,

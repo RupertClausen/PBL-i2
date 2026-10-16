@@ -1,0 +1,31 @@
+# ---- PlatformIO / C++ ----
+.pio/
+.vscode/*
+!.vscode/extensions.json
+*.o
+*.elf
+*.bin
+
+# ---- Python ----
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# ---- SolidWorks ----
+# Lock / temporary files created while a document is open
+~$*
+*.SLDBAK
+*.swbak
+*.bak
+
+# ---- Slicer output (share g-code / projects via the shared drive instead) ----
+*.gcode
+*.3mf.bak
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~

@@ -1,0 +1,20 @@
+# Normalise line endings for text files (team uses Windows, macOS and Linux)
+* text=auto
+
+# CAD and binary files: never diff or merge, never touch line endings
+*.SLDPRT binary
+*.SLDASM binary
+*.SLDDRW binary
+*.sldprt binary
+*.sldasm binary
+*.slddrw binary
+*.STEP   binary
+*.step   binary
+*.STP    binary
+*.stp    binary
+*.STL    binary
+*.stl    binary
+*.3mf    binary
+*.png    binary
+*.jpg    binary
+*.pdf    binary
