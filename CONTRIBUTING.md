@@ -20,7 +20,7 @@ simple rules keep it usable for everyone across two countries and time zones.
 Short, imperative, and prefixed with the area:
 
 ```
-firmware: add inverse kinematics for 3-DOF leg
+firmware: add inverse kinematics for 2-DOF leg
 cad: thicken femur bracket to 3 mm
 bom: switch to MG996R for hip servos
 docs: add stair-climbing test results
