@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ToF Grid</title>
+<style>
+  :root {
+    --bg: #f4f4f2; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6b66;
+    --border: #e1e1dc; --empty: #d9d9d4; --hatch: #bdbdb7; --accent: #2b6cb0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141414; --panel: #1e1e1e; --text: #ececea; --muted: #9a9a95;
+      --border: #2e2e2e; --empty: #2a2a2a; --hatch: #3a3a3a; --accent: #63a4ff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 1040px; margin: 0 auto; padding: 24px 16px; }
+  header { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  h1 { font-size: 20px; margin: 0; font-weight: 600; }
+  #status { color: var(--muted); font-size: 13px; }
+  #dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); margin-right: 6px; }
+  #dot.live { background: #2f9e44; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 20px; }
+  @media (max-width: 760px) { .layout { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  #grid {
+    display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px;
+    aspect-ratio: 1; width: 100%; max-width: 680px; margin: 0 auto;
+  }
+  .cell {
+    position: relative; border-radius: 4px; background: var(--empty);
+    display: flex; align-items: center; justify-content: center;
+    font-variant-numeric: tabular-nums; font-weight: 600;
+    font-size: clamp(9px, 1.7vw, 15px);
+  }
+  .cell .st {
+    position: absolute; top: 3px; right: 5px; font-size: 9px; font-weight: 500; opacity: .75; display: none;
+  }
+  .show-status .cell .st { display: block; }
+  .cell.weak { opacity: .45; }
+  .cell.none {
+    background: repeating-linear-gradient(45deg, var(--hatch) 0 3px, var(--empty) 3px 9px);
+    color: var(--muted) !important;
+  }
+  .legend { margin: 14px auto 0; max-width: 680px; }
+  #bar { height: 10px; border-radius: 5px; }
+  .ticks { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .stat .k { color: var(--muted); font-size: 12px; }
+  .stat .v { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .ctl { margin: 12px 0; }
+  .ctl label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .ctl .row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  input[type=range] { width: 100%; accent-color: var(--accent); }
+  input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
+  .btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  button {
+    font: inherit; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--bg); color: var(--text); cursor: pointer;
+  }
+  button:hover { border-color: var(--accent); }
+  hr { border: 0; border-top: 1px solid var(--border); margin: 14px 0; }
+  .hint { color: var(--muted); font-size: 12px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>VL53L5CX 8×8</h1>
+    <span id="status"><span id="dot"></span><span id="statustext">connecting…</span></span>
+  </header>
+  <div class="layout">
+    <section class="card">
+      <div id="grid"></div>
+      <div class="legend">
+        <div id="bar"></div>
+        <div class="ticks"><span>0 mm (near)</span><span id="tickmid"></span><span id="tickmax"></span></div>
+      </div>
+    </section>
+    <aside class="card">
+      <div class="stats">
+        <div class="stat"><div class="k">Frame rate</div><div class="v" id="hz">–</div></div>
+        <div class="stat"><div class="k">Nearest</div><div class="v" id="near">–</div></div>
+        <div class="stat"><div class="k">Mean</div><div class="v" id="mean">–</div></div>
+        <div class="stat"><div class="k">Valid zones</div><div class="v" id="valid">–</div></div>
+      </div>
+      <hr>
+      <div class="ctl">
+        <div class="row"><span>Color range</span><span id="maxlabel"></span></div>
+        <input type="range" id="max" min="200" max="4000" step="100">
+      </div>
+      <div class="ctl"><label><input type="checkbox" id="nums"> Show distances</label></div>
+      <div class="ctl"><label><input type="checkbox" id="stat"> Show target status</label></div>
+      <div class="ctl"><label><input type="checkbox" id="strict"> Hide low-confidence zones</label></div>
+      <hr>
+      <div class="ctl">
+        <div class="row"><span>Orientation</span></div>
+        <div class="btns">
+          <button id="mirror">Mirror ⇆</button>
+          <button id="flip">Flip ⇅</button>
+          <button id="rot">Rotate ⟳</button>
+        </div>
+      </div>
+      <p class="hint">Hatched = no target. Faded = low-confidence reading (status other than 5/9).</p>
+    </aside>
+  </div>
+</main>
+<script>
+// Turbo-like ramp: index 0 = near (hot), 1 = far (cool)
+const STOPS = ["#7a0403","#c42503","#f05b12","#fe9b2d","#e1dd37","#a4fc3c","#46f884","#1bcfd4","#3e9bfe","#4662d7","#30123b"];
+const RGB = STOPS.map(h => [1,3,5].map(i => parseInt(h.slice(i, i+2), 16)));
+function ramp(t) {
+  t = Math.min(1, Math.max(0, t)) * (RGB.length - 1);
+  const i = Math.min(RGB.length - 2, Math.floor(t)), f = t - i;
+  return RGB[i].map((c, k) => Math.round(c + (RGB[i+1][k] - c) * f));
+}
+document.getElementById("bar").style.background =
+  `linear-gradient(to right, ${STOPS.join(",")})`;
+
+const VALID = new Set([5, 9]);           // fully valid ranges
+const NO_TARGET = new Set([0, 255]);     // nothing to show
+
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("tofgrid." + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem("tofgrid." + k, JSON.stringify(v)); } catch {} },
+};
+const opt = {
+  max: store.get("max", 1500), nums: store.get("nums", true), stat: store.get("stat", false),
+  strict: store.get("strict", false), mirror: store.get("mirror", true),
+  flip: store.get("flip", false), rot: store.get("rot", 0),
+};
+
+const grid = document.getElementById("grid");
+const cells = [];
+for (let i = 0; i < 64; i++) {
+  const c = document.createElement("div");
+  c.className = "cell";
+  c.innerHTML = '<span class="v"></span><span class="st"></span>';
+  grid.appendChild(c);
+  cells.push(c);
+}
+
+// Display position (r,c) -> sensor zone index, after rotate/mirror/flip
+function zoneAt(r, c) {
+  for (let k = 0; k < opt.rot; k++) [r, c] = [7 - c, r];
+  if (opt.mirror) c = 7 - c;
+  if (opt.flip) r = 7 - r;
+  return r * 8 + c;
+}
+
+let last = null;
+function render() {
+  if (!last) return;
+  const { d, s } = last;
+  for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+    const z = zoneAt(r, c), el = cells[r * 8 + c];
+    const none = NO_TARGET.has(s[z]) || (opt.strict && !VALID.has(s[z]));
+    el.classList.toggle("none", none);
+    el.classList.toggle("weak", !none && !VALID.has(s[z]));
+    el.firstChild.textContent = none ? "" : (opt.nums ? d[z] : "");
+    el.lastChild.textContent = s[z];
+    if (none) { el.style.background = ""; el.style.color = ""; continue; }
+    const [R, G, B] = ramp(d[z] / opt.max);
+    el.style.background = `rgb(${R},${G},${B})`;
+    el.style.color = (0.299 * R + 0.587 * G + 0.114 * B) > 140 ? "#111" : "#fff";
+  }
+  const good = d.filter((_, i) => !NO_TARGET.has(s[i]) && (!opt.strict || VALID.has(s[i])));
+  document.getElementById("near").textContent = good.length ? Math.min(...good) + " mm" : "–";
+  document.getElementById("mean").textContent = good.length ? Math.round(good.reduce((a, b) => a + b) / good.length) + " mm" : "–";
+  document.getElementById("valid").textContent = `${s.filter(x => VALID.has(x)).length}/64`;
+}
+
+function applyOpts() {
+  document.getElementById("max").value = opt.max;
+  document.getElementById("maxlabel").textContent = `0 – ${opt.max} mm`;
+  document.getElementById("tickmid").textContent = `${opt.max / 2} mm`;
+  document.getElementById("tickmax").textContent = `${opt.max} mm (far)`;
+  document.getElementById("nums").checked = opt.nums;
+  document.getElementById("stat").checked = opt.stat;
+  document.getElementById("strict").checked = opt.strict;
+  grid.classList.toggle("show-status", opt.stat);
+  for (const k in opt) store.set(k, opt[k]);
+  render();
+}
+document.getElementById("max").oninput = e => { opt.max = +e.target.value; applyOpts(); };
+for (const k of ["nums", "stat", "strict"]) document.getElementById(k).onchange = e => { opt[k] = e.target.checked; applyOpts(); };
+document.getElementById("mirror").onclick = () => { opt.mirror = !opt.mirror; applyOpts(); };
+document.getElementById("flip").onclick = () => { opt.flip = !opt.flip; applyOpts(); };
+document.getElementById("rot").onclick = () => { opt.rot = (opt.rot + 1) % 4; applyOpts(); };
+applyOpts();
+
+const dot = document.getElementById("dot"), statustext = document.getElementById("statustext");
+let staleTimer;
+function connect() {
+  const es = new EventSource("/stream");
+  es.onmessage = ev => {
+    const m = JSON.parse(ev.data);
+    if (m.type === "frame") {
+      last = m;
+      render();
+      document.getElementById("hz").textContent = m.hz ? m.hz.toFixed(1) + " Hz" : "–";
+      dot.classList.add("live");
+      statustext.textContent = "live";
+      clearTimeout(staleTimer);
+      staleTimer = setTimeout(() => { dot.classList.remove("live"); statustext.textContent = "no frames"; }, 1500);
+    } else {
+      statustext.textContent = m.text;
+    }
+  };
+  es.onerror = () => { dot.classList.remove("live"); statustext.textContent = "viewer.py not running?"; };
+}
+connect();
+</script>
+</body>
+</html>
