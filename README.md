@@ -57,14 +57,14 @@ pio device monitor              # serial console at 115200 baud
 
 | Name | University | Role |
 |------|------------|------|
-| Takahashi Yuuki     | Kyutech    |      |
-| Dambara Riki     | Kyutech    |      |
-| Mizutani Mutsumi     | Kyutech    |      |
-| Yamaguchi Asuka     | Kyutech    |      |
+| Takahashi Yuuki     | Kyutech    | Software     |
+| Dambara Riki     | Kyutech    | Software     |
+| Mizutani Mutsumi     | Kyutech    | Hardware     |
+| Yamaguchi Asuka     | Kyutech    | Hardware     |
 | Jitmiyom Supicha     | KMUTNB     | Main Designer     |
 | Raungrit Punroon     | KMUTNB     | Sup Designer     |
 | Thoetseritham Matsakon     | KMUTNB     | Software     |
-| Sugihara Kotaro     | Kyutech    |      |
+| Sugihara Kotaro     | Kyutech    | Hardware     |
 
 ## Contributing
 
