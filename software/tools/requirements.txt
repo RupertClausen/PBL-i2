@@ -1,0 +1,7 @@
+pyyaml
+numpy
+matplotlib
+pillow          (optional: gait_sim.py --gif)
+# add when you write the other tools:
+# pyserial        (servo calibration)
+# opencv-python   (ball detection)
