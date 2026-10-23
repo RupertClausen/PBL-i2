@@ -9,7 +9,7 @@ Power,Buck converter (servo),High-current step-down to 5-6 V (>= 10 A),1,,,,,Pro
 Power,Buck converter (logic),Step-down to 5 V for ESP32,1,,,,,Proposed,Keep logic supply separate from servo supply
 Power,Power switch,Main power switch,1,,,,,Proposed,
 Power,Connectors,XT60 pair,1,,,,,Proposed,
-Sensors,IMU,MPU6050 or similar 6-axis IMU,1,,,,,Optional,Body balance on stairs
+Sensors,IMU,MPU9250 or similar 9-axis IMU,1,,,,,Optional,Body balance on stairs
 Sensors,Distance / vision sensor,For tennis ball detection (TBD),1,,,,,TBD,
 Hardware,Screws,M3 socket head (lengths TBD),,,,,,TBD,
 Hardware,Nuts,M3 nuts / heat-set inserts,,,,,,TBD,
