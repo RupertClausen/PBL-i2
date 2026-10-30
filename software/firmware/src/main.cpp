@@ -4,18 +4,22 @@
 //   center   move every servo to 90 deg + trim (use before fitting horns)
 //   stand    stand at STAND_HEIGHT using inverse kinematics
 //   relax    stop driving the servos
+//   climb    run the stair-climbing sequence (up and down STAIR_STEP_COUNT
+//            steps); any other command aborts it
 //   help     list commands
 
 #include <Arduino.h>
 
 #include "Kinematics.h"
 #include "LegServos.h"
+#include "StairClimb.h"
 #include "robot_config.h"
 
 enum class Mode { IDLE, STAND, WALK, CLIMB, GOALKEEP };
 
 static LegServos servos;
 static LegKinematics ik(COXA_LEN, FEMUR_LEN, TIBIA_LEN);
+static StairClimber climber(servos, ik);
 static Mode mode = Mode::IDLE;
 
 static bool moveFoot(Leg leg, float x, float y, float z) {
@@ -36,6 +40,8 @@ static void stand() {
 }
 
 static void handleCommand(const String &cmd) {
+  if (cmd != "help") climber.abort();
+
   if (cmd == "center") {
     servos.centerAll();
     mode = Mode::IDLE;
@@ -45,8 +51,11 @@ static void handleCommand(const String &cmd) {
   } else if (cmd == "relax") {
     servos.relaxAll();
     mode = Mode::IDLE;
+  } else if (cmd == "climb") {
+    climber.start();
+    mode = Mode::CLIMB;
   } else if (cmd == "help") {
-    Serial.println("Commands: center, stand, relax, help");
+    Serial.println("Commands: center, stand, relax, climb, help");
     return;
   } else {
     Serial.printf("Unknown command '%s' (try 'help')\n", cmd.c_str());
@@ -71,8 +80,15 @@ void loop() {
   }
 
   switch (mode) {
+    case Mode::CLIMB:
+      if (climber.update()) {
+        Serial.println("Climb finished");
+        mode = Mode::STAND;
+      } else if (!climber.running()) {
+        mode = Mode::IDLE;  // aborted
+      }
+      break;
     case Mode::WALK:      // TODO: trot / creep gait
-    case Mode::CLIMB:     // TODO: stair-climbing gait (2 cm steps)
     case Mode::GOALKEEP:  // TODO: ball detection + blocking motion
     default:
       break;

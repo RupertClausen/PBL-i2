@@ -50,3 +50,6 @@ constexpr int8_t SERVO_DIR[NUM_LEGS][NUM_JOINTS] = {
 
 // ---------- Default stance ----------
 constexpr float STAND_HEIGHT = 90.0f;  // mm, hip to foot
+
+// ---------- Stair climbing ----------
+constexpr int STAIR_STEP_COUNT = 3;  // steps to climb up, then down again
